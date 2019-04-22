@@ -1,0 +1,15 @@
+{
+  "name": "networkingtest",
+  "version": "1.0.0",
+  "description": "connect bitcoin core to bcoin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matthew Zipkin",
+  "license": "MIT",
+  "dependencies": {
+    "bcurl": "^0.1.5",
+    "blgr": "^0.1.7"
+  }
+}
