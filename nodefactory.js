@@ -15,8 +15,8 @@ class NodeFactory {
   createDir(index) {
     const dataDir = path.join(__dirname, `data/datadir_${index}`);
 
-    cp.spawnSync('rm', ['-rf', dataDir], {cwd: `${__dirname}/data`});
-    cp.spawnSync('mkdir', [dataDir], {cwd: `${__dirname}/data`});
+    cp.spawnSync('rm', ['-rf', dataDir]);
+    cp.spawnSync('mkdir', [dataDir]);
 
     return dataDir;
   }
@@ -38,16 +38,20 @@ class NodeFactory {
       port: ports.rpcport
     });
 
+    const rpc = function (cmd, args) {
+      return client.execute('', cmd, args);
+    };
+
     return {
       index,
       dataDir,
       ports,
-      client
+      rpc
     };
   }
 
   async createBcoin() {
-    const {index, dataDir, ports, client} = this.initNode();
+    const {index, dataDir, ports, rpc} = this.initNode();
 
     const node = new bcoin.FullNode({
       network: 'regtest',
@@ -71,11 +75,11 @@ class NodeFactory {
     await node.connect();
     node.startSync();
 
-    return {index, dataDir, ports, client, node};
+    return {index, dataDir, ports, rpc, node};
   }
 
   createCore() {
-    const {index, dataDir, ports, client} = this.initNode();
+    const {index, dataDir, ports, rpc} = this.initNode();
 
     this.spawnSyncPrint(
       index,
@@ -91,7 +95,7 @@ class NodeFactory {
       {stdio: 'pipe'}
     );
 
-    return {index, dataDir, ports, client};
+    return {index, dataDir, ports, rpc};
   }
 
   spawnSyncPrint(id, cmd, arg, opt) {
