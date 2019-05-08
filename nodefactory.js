@@ -62,8 +62,40 @@ class NodeFactory {
       memory: false,
       port: ports.port,
       httpPort: ports.rpcport,
+      maxOutbound: 1,
+      prune: false
+    });
+
+    const printStdout = this.printStdout;
+    node.logger.logger.writeConsole = function(level, module, args) {
+      printStdout(index, '[' + module + '] ' + format(args, false));
+    };
+
+    await node.ensure();
+    await node.open();
+    await node.connect();
+    node.startSync();
+
+    return {index, dataDir, ports, rpc, node};
+  }
+
+  async createBcoinSPV() {
+    const {index, dataDir, ports, rpc} = this.initNode();
+
+    const node = new bcoin.SPVNode({
+      network: 'regtest',
+      workers: true,
+      logLevel: 'spam',
+      listen: true,
+      prefix: `${dataDir}`,
+      memory: false,
+      port: ports.port,
+      httpPort: ports.rpcport,
       maxOutbound: 1
     });
+
+    const plugin = bcoin.wallet.plugin;
+    node.use(plugin);
 
     const printStdout = this.printStdout;
     node.logger.logger.writeConsole = function(level, module, args) {
