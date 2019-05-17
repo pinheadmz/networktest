@@ -12,7 +12,7 @@ const nodeFactory = new NodeFactory();
   const bcoin = await nodeFactory.createBcoin();
 
   // Core 1 generates 1000 blocks
-  await new Promise(r => setTimeout(r, 2000));
+  await new Promise(r => setTimeout(r, 5000));
   await core1.rpc(
     'generatetoaddress',
     [1000, 'mfWxJ45yp2SFn7UciZyNpvDKrzbhyfKrY8']

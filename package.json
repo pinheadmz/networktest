@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "bcurl": "^0.1.5",
-    "blgr": "^0.1.7"
+    "blgr": "^0.1.7",
+    "bs32": "~0.1.5"
   }
 }

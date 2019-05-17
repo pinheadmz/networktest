@@ -1,6 +1,7 @@
 'use strict';
 
 const bcoin = require('bcoin');
+const hsd = require('hsd');
 const format = require('blgr/lib/format');
 
 const path = require('path');
@@ -24,7 +25,9 @@ class NodeFactory {
   getPorts(index) {
     return {
       port: 10000 + index,
-      rpcport: 20000 + index
+      rpcport: 20000 + index,
+      nsport: 30000 + index,
+      rsport: 40000 + index
     };
   }
 
@@ -63,7 +66,40 @@ class NodeFactory {
       port: ports.port,
       httpPort: ports.rpcport,
       maxOutbound: 1,
-      prune: false
+      prune: false,
+      bip37: true
+    });
+
+    const printStdout = this.printStdout;
+    node.logger.logger.writeConsole = function(level, module, args) {
+      printStdout(index, '[' + module + '] ' + format(args, false));
+    };
+
+    await node.ensure();
+    await node.open();
+    await node.connect();
+    node.startSync();
+
+    return {index, dataDir, ports, rpc, node};
+  }
+
+  async createHSD() {
+    const {index, dataDir, ports, rpc} = this.initNode();
+
+    const node = new hsd.FullNode({
+      network: 'regtest',
+      workers: true,
+      logLevel: 'spam',
+      listen: true,
+      prefix: `${dataDir}`,
+      memory: false,
+      port: ports.port,
+      httpPort: ports.rpcport,
+      nsPort: ports.nsport,
+      rsPort: ports.rsport,
+      maxOutbound: 1,
+      prune: false,
+      bip37: true
     });
 
     const printStdout = this.printStdout;
