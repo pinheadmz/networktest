@@ -1,12 +1,16 @@
 'use strict';
 
 const NodeFactory = require('./nodefactory');
+const BN = require('bcoin/node_modules/bcrypto/lib/bn.js');
 
 const nodeFactory = new NodeFactory();
 
 (async () => {
   const core1 = nodeFactory.createCore();
   const bcoin = await nodeFactory.createBcoin();
+
+
+  bcoin.node.network.pow.chainwork = bcoin.node.network.pow.chainwork.mul( new BN(50) )
 
   // Core 1 generates 100 blocks
   await new Promise(r => setTimeout(r, 5000));
@@ -15,7 +19,7 @@ const nodeFactory = new NodeFactory();
     [100, 'mfWxJ45yp2SFn7UciZyNpvDKrzbhyfKrY8']
   );
 
-  // bcoin connects to Core 1, 2, 3, 4 and syncs from all
+  // bcoin connects to Core and syncs
   await new Promise(r => setTimeout(r, 5000));
   await bcoin.rpc(
     'addnode',

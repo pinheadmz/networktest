@@ -12,12 +12,12 @@ const nodeFactory = new NodeFactory();
   await new Promise(r => setTimeout(r, 5000));
   const hsd1key = base32.encode(hsd1.node.pool.hosts.address.key);
 
-  // HSD 1 generates 100 blocks
-  await new Promise(r => setTimeout(r, 5000));
-  await hsd1.rpc(
-    'generatetoaddress',
-    [100, 'rs1qpu06wprkwleh579mureghcasjhu9uwge6pltn5']
-  );
+  // // HSD 1 generates 100 blocks
+  // await new Promise(r => setTimeout(r, 5000));
+  // await hsd1.rpc(
+  //   'generatetoaddress',
+  //   [100, 'rs1qpu06wprkwleh579mureghcasjhu9uwge6pltn5']
+  // );
 
   // bcoin connects to Core 1, 2, 3, 4 and syncs from all
   await new Promise(r => setTimeout(r, 5000));

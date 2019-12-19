@@ -1,6 +1,7 @@
 'use strict';
 
 const NodeFactory = require('./nodefactory');
+const BN = require('bcoin/node_modules/bcrypto/lib/bn.js');
 
 const nodeFactory = new NodeFactory();
 
@@ -10,6 +11,7 @@ const nodeFactory = new NodeFactory();
   const core3 = nodeFactory.createCore();
   const core4 = nodeFactory.createCore();
   const bcoin = await nodeFactory.createBcoin();
+  bcoin.node.network.pow.chainwork = bcoin.node.network.pow.chainwork.mul( new BN(50) )
 
   // Core 1 generates 1000 blocks
   await new Promise(r => setTimeout(r, 5000));
@@ -39,15 +41,19 @@ const nodeFactory = new NodeFactory();
     'addnode',
     [`127.0.0.1:${core1.ports.port}`, 'add']
   );
+  await new Promise(r => setTimeout(r, 1000));
+
   await bcoin.rpc(
     'addnode',
     [`127.0.0.1:${core2.ports.port}`, 'add']
   );
+  await new Promise(r => setTimeout(r, 1000));
 
   await bcoin.rpc(
     'addnode',
     [`127.0.0.1:${core3.ports.port}`, 'add']
   );
+  await new Promise(r => setTimeout(r, 1000));
 
   await bcoin.rpc(
     'addnode',

@@ -37,7 +37,7 @@ const nodeFactory = new NodeFactory();
   // Force bcoin pool to reload checkpoints
   bcoin.node.pool.resetCheckpoints();
 
-  // bcoin connects to Core 1, 2, 3, 4 and syncs from all
+  // bcoin connects to Core and syncs
   await new Promise(r => setTimeout(r, 5000));
   await bcoin.rpc(
     'addnode',

@@ -2,6 +2,7 @@
 
 const bcoin = require('bcoin');
 const hsd = require('hsd');
+
 const format = require('blgr/lib/format');
 
 const path = require('path');
@@ -27,7 +28,8 @@ class NodeFactory {
       port: 10000 + index,
       rpcport: 20000 + index,
       nsport: 30000 + index,
-      rsport: 40000 + index
+      rsport: 40000 + index,
+      walletport: 50000 + index
     };
   }
 
@@ -56,6 +58,10 @@ class NodeFactory {
   async createBcoin() {
     const {index, dataDir, ports, rpc} = this.initNode();
 
+    // Prevent automatic outbound connection attempts
+    bcoin.networks.regtest.seeds = [];
+    bcoin.networks.regtest.selfConnect = false;
+
     const node = new bcoin.FullNode({
       network: 'regtest',
       workers: true,
@@ -65,10 +71,14 @@ class NodeFactory {
       memory: false,
       port: ports.port,
       httpPort: ports.rpcport,
-      maxOutbound: 1,
+      // maxOutbound: 1,
       prune: false,
       bip37: true
     });
+
+    const plugin = bcoin.wallet.plugin;
+    node.use(plugin);
+    node.plugins.walletdb.http.config.port = ports.walletport;
 
     const printStdout = this.printStdout;
     node.logger.logger.writeConsole = function(level, module, args) {
@@ -86,6 +96,10 @@ class NodeFactory {
   async createHSD() {
     const {index, dataDir, ports, rpc} = this.initNode();
 
+    // Prevent automatic outbound connection attempts
+    hsd.networks.regtest.seeds = [];
+    hsd.networks.regtest.selfConnect = false;
+
     const node = new hsd.FullNode({
       network: 'regtest',
       workers: true,
@@ -97,9 +111,10 @@ class NodeFactory {
       httpPort: ports.rpcport,
       nsPort: ports.nsport,
       rsPort: ports.rsport,
-      maxOutbound: 1,
+      // maxOutbound: 1,
       prune: false,
-      bip37: true
+      bip37: true,
+      identityKey: hsd.HDPrivateKey.generate().toRaw().slice(-32)
     });
 
     const printStdout = this.printStdout;
